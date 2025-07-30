@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom brand colors */
+.bg-brand {
+  background-color: #4F46E5;
+}
+
+.bg-brand-light {
+  background-color: #F3F4F6;
+}
+
+.bg-brand-dark {
+  background-color: #111827;
+}
+
+.bg-brand-darker {
+  background-color: #0F172A;
+}
+
+.text-brand {
+  color: #4F46E5;
+}
+
+.text-brand-dark {
+  color: #111827;
+}
+
+.text-brand-darker {
+  color: #0F172A;
+}
+
+.border-brand {
+  border-color: #4F46E5;
+}
+
+.ring-brand {
+  --tw-ring-color: #4F46E5;
+}
+
+.focus\:ring-brand:focus {
+  --tw-ring-color: #4F46E5;
+}
+
+.focus\:border-brand:focus {
+  border-color: #4F46E5;
+}
+
+.hover\:bg-brand:hover {
+  background-color: #4338CA;
+}
+
+.hover\:text-brand:hover {
+  color: #4338CA;
+}
+
+/* Custom utilities */
+.text-primary {
+  color: #4F46E5;
+}
+
+.text-secondary {
+  color: #10B981;
+}
+
+.text-danger {
+  color: #EF4444;
+}
+
+.text-warning {
+  color: #F59E0B;
+}
+
+.text-info {
+  color: #3B82F6;
+}
+
+.bg-primary {
+  background-color: #4F46E5;
+}
+
+.bg-secondary {
+  background-color: #10B981;
+}
+
+.bg-danger {
+  background-color: #EF4444;
+}
+
+.bg-warning {
+  background-color: #F59E0B;
+}
+
+.bg-info {
+  background-color: #3B82F6;
+}
+
+/* Custom components */
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200;
+}
+
+.btn-primary {
+  @apply bg-brand text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200;
+}
+
+.input {
+  @apply appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand focus:border-brand sm:text-sm;
+} 

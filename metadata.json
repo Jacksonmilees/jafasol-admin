@@ -1,0 +1,5 @@
+{
+  "name": "Jafasol Super Admin Dashboard",
+  "description": "A comprehensive multi-tenant control panel for managing schools on the Jafasol platform. The dashboard provides tools for school onboarding, subscription management, module assignment, global analytics, and system monitoring.",
+  "requestFramePermissions": []
+}
