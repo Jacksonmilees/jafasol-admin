@@ -32,25 +32,25 @@ interface SubdomainTemplate {
 }
 
 const SSLStatusBadge: React.FC<{ status: SSLStatus }> = ({ status }) => {
-  const baseClasses = "px-2.5 py-0.5 text-xs font-medium rounded-full inline-block";
-  const statusClasses = {
+    const baseClasses = "px-2.5 py-0.5 text-xs font-medium rounded-full inline-block";
+    const statusClasses = {
     active: "bg-green-100 text-green-800",
     pending: "bg-yellow-100 text-yellow-800",
     expired: "bg-red-100 text-red-800",
     error: "bg-red-100 text-red-800",
-  };
-  return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
+    };
+    return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
 };
 
 const ServerStatusBadge: React.FC<{ status: ServerStatus }> = ({ status }) => {
-  const baseClasses = "px-2.5 py-0.5 text-xs font-medium rounded-full inline-block";
-  const statusClasses = {
+    const baseClasses = "px-2.5 py-0.5 text-xs font-medium rounded-full inline-block";
+    const statusClasses = {
     online: "bg-green-100 text-green-800",
     offline: "bg-red-100 text-red-800",
     provisioning: "bg-blue-100 text-blue-800",
     maintenance: "bg-yellow-100 text-yellow-800",
-  };
-  return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
+    };
+    return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
 };
 
 const SubdomainManager: React.FC = () => {
@@ -174,11 +174,11 @@ const SubdomainManager: React.FC = () => {
     }
   };
 
-  return (
-    <div className="space-y-6">
+    return (
+        <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div>
+            <div>
           <h1 className="text-3xl font-bold text-gray-800">Subdomain Management</h1>
           <p className="mt-1 text-gray-600">Manage custom subdomains for each school</p>
         </div>
@@ -245,15 +245,15 @@ const SubdomainManager: React.FC = () => {
             DNS Management
           </button>
         </nav>
-      </div>
+            </div>
 
       {/* Content */}
       {activeTab === 'overview' && (
-        <Card>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
+            <Card>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <input
                       type="checkbox"
@@ -268,9 +268,9 @@ const SubdomainManager: React.FC = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Server Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
                 {subdomains.map((subdomain) => (
                   <tr key={subdomain.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -294,9 +294,9 @@ const SubdomainManager: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <ServerStatusBadge status={subdomain.serverStatus as ServerStatus} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(subdomain.createdAt).toLocaleDateString()}
-                    </td>
+                                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                       <button
                         onClick={() => handleHealthCheck(subdomain.id)}
@@ -328,13 +328,13 @@ const SubdomainManager: React.FC = () => {
                       >
                         Delete
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
       )}
 
       {activeTab === 'analytics' && analyticsData && (
@@ -455,8 +455,8 @@ const SubdomainManager: React.FC = () => {
           confirmButtonClass="bg-red-600 hover:bg-red-700"
         />
       )}
-    </div>
-  );
+        </div>
+    );
 };
 
 export default SubdomainManager;

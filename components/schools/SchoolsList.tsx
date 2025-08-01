@@ -76,6 +76,7 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
             />
             {editingSchool && (
                 <ManageSchoolModal 
+                    isOpen={!!editingSchool}
                     school={editingSchool} 
                     onClose={() => setEditingSchool(null)} 
                     onSave={handleUpdateSchool}
@@ -122,8 +123,8 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {schools.map((school) => (
-                                <tr key={school.id}>
+                            {schools.map((school, index) => (
+                                <tr key={school.id || `school-${index}`}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-10 w-10">
@@ -140,7 +141,10 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{school.storageUsage} GB</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{school.subdomain}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                                        <button onClick={() => setEditingSchool(school)} className="text-primary hover:text-indigo-900">Manage</button>
+                                        <button onClick={() => {
+                                            console.log('Manage button clicked for school:', school);
+                                            setEditingSchool(school);
+                                        }} className="text-primary hover:text-indigo-900">Manage</button>
                                         <button onClick={() => setDeletingSchool(school)} className="text-danger hover:text-red-700">Delete</button>
                                     </td>
                                 </tr>

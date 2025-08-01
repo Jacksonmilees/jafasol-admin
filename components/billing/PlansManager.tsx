@@ -5,6 +5,7 @@ import { Plan, PlanName, Invoice, InvoiceStatus, School, SchoolStatus } from '..
 import { PlusIcon } from '../icons/Icons';
 import Modal from '../ui/Modal';
 import ConfirmationModal from '../ui/ConfirmationModal';
+import { useAdmin } from '../../context/AdminContext';
 
 // --- PlanEditorModal Component (defined in the same file) ---
 interface PlanEditorModalProps {
@@ -33,7 +34,7 @@ const PlanEditorModal: React.FC<PlanEditorModalProps> = ({ isOpen, onClose, onSa
     } else {
       // Reset for new plan
       setName(PlanName.Basic);
-      setPlanData({ price: 99, durationDays: 30, features: [] });
+      setPlanData({ price: 15000, durationDays: 30, features: [] });
       setFeaturesStr('');
     }
   }, [planToEdit, isOpen]);
@@ -63,7 +64,7 @@ const PlanEditorModal: React.FC<PlanEditorModalProps> = ({ isOpen, onClose, onSa
         </div>
         <div className="grid grid-cols-2 gap-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700">Price ($/mo)</label>
+                <label className="block text-sm font-medium text-gray-700">Price (KSh/mo)</label>
                 <input type="number" value={planData.price} onChange={e => setPlanData({...planData, price: Number(e.target.value)})} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
             </div>
             <div>
@@ -104,19 +105,18 @@ const InvoiceStatusBadge: React.FC<{ status: InvoiceStatus }> = ({ status }) => 
 };
 
 const TabButton: React.FC<{ label: string; isActive: boolean; onClick: () => void }> = ({ label, isActive, onClick }) => (
-    <button onClick={onClick} className={`px-4 py-2 text-sm font-medium rounded-md ${ isActive ? 'bg-primary text-white' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100' }`}>
+    <button onClick={onClick} className={`px-4 py-2 text-sm font-medium rounded-md ${isActive ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:text-gray-700'}`}>
         {label}
     </button>
 );
 
-
 const PlansManager: React.FC<PlansManagerProps> = ({ invoices, schools, onUpdateSchool }) => {
+  const { state } = useAdmin();
   const [activeTab, setActiveTab] = useState<ActiveTab>('plans');
   const [plans, setPlans] = useState<Record<string, Plan>>(PLANS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [suspendingInvoice, setSuspendingInvoice] = useState<Invoice | null>(null);
-
 
   const handleOpenModal = (plan: Plan | null) => {
     setEditingPlan(plan);
@@ -125,6 +125,8 @@ const PlansManager: React.FC<PlansManagerProps> = ({ invoices, schools, onUpdate
   
   const handleSavePlan = (updatedPlan: Plan) => {
     setPlans(prev => ({...prev, [updatedPlan.name]: updatedPlan}));
+    // TODO: Add API call to save plan to backend
+    console.log('Saving plan to backend:', updatedPlan);
   }
 
   const handleConfirmSuspend = () => {
@@ -134,6 +136,16 @@ const PlansManager: React.FC<PlansManagerProps> = ({ invoices, schools, onUpdate
         onUpdateSchool({ ...schoolToSuspend, status: SchoolStatus.Suspended });
     }
     setSuspendingInvoice(null);
+  }
+
+  const handleDeleteInvoice = (invoiceId: string) => {
+    // TODO: Add API call to delete invoice
+    console.log('Deleting invoice:', invoiceId);
+  }
+
+  const handleEditInvoice = (invoice: Invoice) => {
+    // TODO: Add API call to edit invoice
+    console.log('Editing invoice:', invoice);
   }
 
   return (
@@ -174,7 +186,7 @@ const PlansManager: React.FC<PlansManagerProps> = ({ invoices, schools, onUpdate
               <div className="p-6 flex-grow">
                 <h3 className="text-2xl font-bold text-gray-800">{plan.name}</h3>
                 <p className="mt-2 text-gray-500">
-                  <span className="text-4xl font-extrabold text-gray-900">${plan.price}</span>
+                  <span className="text-4xl font-extrabold text-gray-900">KSh {plan.price.toLocaleString()}</span>
                   <span className="text-base font-medium text-gray-500">/{plan.durationDays === 30 ? 'mo' : 'yr'}</span>
                 </p>
                 <ul className="mt-6 space-y-4">
@@ -219,13 +231,14 @@ const PlansManager: React.FC<PlansManagerProps> = ({ invoices, schools, onUpdate
                     <tr key={invoice.id}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{invoice.id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{invoice.schoolName}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${invoice.amount.toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">KSh {invoice.amount.toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{invoice.dueDate}</td>
                         <td className="px-6 py-4 whitespace-nowrap"><InvoiceStatusBadge status={invoice.status} /></td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                            <a href="#" className="text-primary hover:text-indigo-900">View</a>
+                            <button onClick={() => handleEditInvoice(invoice)} className="text-primary hover:text-indigo-900">Edit</button>
+                            <button onClick={() => handleDeleteInvoice(invoice.id)} className="text-danger hover:text-red-700">Delete</button>
                             {invoice.status === InvoiceStatus.Overdue && (
-                                <button onClick={() => setSuspendingInvoice(invoice)} className="text-danger hover:text-red-700">Suspend Account</button>
+                                <button onClick={() => setSuspendingInvoice(invoice)} className="text-orange-600 hover:text-orange-700">Suspend Account</button>
                             )}
                         </td>
                     </tr>

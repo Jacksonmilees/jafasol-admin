@@ -16,13 +16,13 @@ export enum ModuleKey {
   StudentManagement = 'studentManagement',
   TeacherManagement = 'teacherManagement',
   Timetable = 'timetable',
-  FeeManagement = 'feeManagement',
+  FeeManagement = 'fees',
   Exams = 'exams',
   Communication = 'communication',
   Attendance = 'attendance',
   Library = 'library',
-  HostelTransport = 'hostelTransport',
-  Settings = 'settings',
+  Transport = 'transport',
+  Academics = 'academics',
 }
 
 export interface Plan {

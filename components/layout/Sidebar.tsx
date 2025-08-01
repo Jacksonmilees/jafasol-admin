@@ -50,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, onLogout }
   ];
 
   return (
-    <div className="w-64 bg-brand-dark text-white flex flex-col h-screen fixed">
+    <div className="w-full lg:w-64 bg-brand-dark text-white flex flex-col h-screen lg:fixed">
       <div className="flex items-center justify-center h-20 border-b border-gray-700">
         <h1 className="text-2xl font-bold">Jafasol</h1>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActiveView, School } from './types';
 import DashboardLayout from './components/layout/DashboardLayout';
 import DashboardOverview from './components/dashboard/DashboardOverview';
@@ -22,6 +22,7 @@ import { AdminProvider, useAdmin } from './context/AdminContext';
 const AppContent: React.FC = () => {
   const { state, login, logout, fetchDashboardStats, fetchSchools, fetchSupportTickets, fetchInvoices, fetchBackups, fetchSystemSettings, fetchSubdomains, fetchUsers, fetchNotifications, fetchAnnouncements, fetchLoginLogs, fetchSecurityAudit, fetchSecuritySettings, fetchFeatureToggles, fetchABTests, fetchAIChatHistory, fetchAIInsights, fetchAIRecommendations, createSchool, updateSchool, deleteSchool } = useAdmin();
   const { isAuthenticated, isLoading, error } = state;
+  const [activeView, setActiveView] = useState<ActiveView>('dashboard');
 
   // Fetch data when authenticated
   useEffect(() => {
@@ -116,7 +117,7 @@ const AppContent: React.FC = () => {
   const renderActiveView = (activeView: ActiveView) => {
     switch (activeView) {
       case 'dashboard':
-        return <DashboardOverview setActiveView={() => {}} schools={state.schools} tickets={state.supportTickets} />;
+        return <DashboardOverview />;
       case 'schools':
         return (
           <SchoolsList 
@@ -151,9 +152,9 @@ const AppContent: React.FC = () => {
       case 'settings':
         return <SystemSettings />;
       case 'dataExport':
-        return <DataExport addToast={() => {}} />;
+        return <DataExport />;
       default:
-        return <DashboardOverview setActiveView={() => {}} schools={state.schools} tickets={state.supportTickets} />;
+        return <DashboardOverview />;
     }
   };
 
@@ -163,13 +164,11 @@ const AppContent: React.FC = () => {
 
   return (
     <DashboardLayout 
-      activeView="dashboard" 
-      setActiveView={() => {}} 
-      onLogout={handleLogout} 
-      toasts={[]} 
-      removeToast={() => {}}
+      activeView={activeView}
+      setActiveView={setActiveView}
+      onLogout={handleLogout}
     >
-      {renderActiveView('dashboard')}
+      {renderActiveView(activeView)}
     </DashboardLayout>
   );
 };

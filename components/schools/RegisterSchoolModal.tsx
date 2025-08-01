@@ -97,7 +97,7 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
             <label htmlFor="plan" className="block text-sm font-medium text-gray-700">Subscription Plan</label>
             <select id="plan" value={plan} onChange={e => setPlan(e.target.value as PlanName)} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm">
               {Object.values(PLANS).map(p => (
-                <option key={p.name} value={p.name}>{p.name} - ${p.price}/mo</option>
+                <option key={p.name} value={p.name}>{p.name} - KSh {p.price.toLocaleString()}/mo</option>
               ))}
             </select>
           </div>

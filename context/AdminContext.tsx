@@ -288,6 +288,8 @@ const AdminContext = createContext<{
   bulkProvisionSubdomains: (subdomainIds: string[]) => Promise<any>;
   getSubdomainTemplates: () => Promise<any>;
   applySubdomainTemplate: (id: string, templateId: string) => Promise<any>;
+  updateSystemSettings: (settings: any) => Promise<void>;
+  uploadSchoolLogo: (id: string, logoData: any) => Promise<any>;
 } | null>(null);
 
 // Provider
@@ -349,66 +351,20 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getDashboardStats();
       dispatch({ type: 'SET_DASHBOARD_STATS', payload: response.stats });
     } catch (error) {
-      console.warn('Using mock data due to API error:', error);
-      // Use mock data as fallback
-      const mockStats = {
-        totalSchools: 25,
-        activeSubscriptions: 23,
-        pendingSchools: 2,
-        suspendedSchools: 0,
-        monthlyRevenue: 12500,
-        totalUsers: 2500,
-        systemHealth: {
-          database: 'Excellent',
-          performance: 'Good',
-          uptime: '99.9%',
-          lastBackup: new Date().toISOString()
-        }
-      };
-      dispatch({ type: 'SET_DASHBOARD_STATS', payload: mockStats });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch dashboard stats' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, []);
 
   // Fetch schools
-  const fetchSchools = useCallback(async (params = {}) => {
+  const fetchSchools = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await apiService.getSchools(params);
+      const response = await apiService.getSchools();
       dispatch({ type: 'SET_SCHOOLS', payload: response.schools || [] });
     } catch (error) {
-      console.warn('Using mock data due to API error:', error);
-      // Use mock data as fallback
-      const mockSchools = [
-        {
-          id: '1',
-          name: 'St. Mary\'s Academy',
-          email: 'admin@stmarys.edu',
-          phone: '123-456-7890',
-          logoUrl: 'https://picsum.photos/seed/stmarys/40/40',
-          plan: 'Premium',
-          status: 'Active',
-          subdomain: 'stmarys.jafasol.com',
-          storageUsage: 2.5,
-          createdAt: '2024-01-15',
-          modules: ['analytics', 'studentManagement', 'feeManagement'],
-        },
-        {
-          id: '2',
-          name: 'Bright Future School',
-          email: 'info@brightfuture.edu',
-          phone: '234-567-8901',
-          logoUrl: 'https://picsum.photos/seed/brightfuture/40/40',
-          plan: 'Basic',
-          status: 'Active',
-          subdomain: 'brightfuture.jafasol.com',
-          storageUsage: 1.8,
-          createdAt: '2024-02-01',
-          modules: ['studentManagement', 'attendance'],
-        }
-      ];
-      dispatch({ type: 'SET_SCHOOLS', payload: mockSchools });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch schools' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -421,39 +377,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getSupportTickets();
       dispatch({ type: 'SET_SUPPORT_TICKETS', payload: response.tickets || [] });
     } catch (error) {
-      console.log('Using mock data due to API error:', error);
-      // Fallback to mock data if API fails
-      const mockTickets = [
-        {
-          id: '1',
-          schoolId: '1',
-          schoolName: 'St. Mary\'s Academy',
-          subject: 'Login Issue',
-          description: 'Unable to access the portal',
-          status: 'open',
-          priority: 'high',
-          lastUpdated: '2024-07-30T10:00:00Z',
-          conversation: [
-            { id: '1', sender: 'School Admin', message: 'Cannot login to the system', timestamp: '2024-07-30T10:00:00Z' },
-            { id: '2', sender: 'Support', message: 'We are investigating the issue', timestamp: '2024-07-30T10:30:00Z' }
-          ]
-        },
-        {
-          id: '2',
-          schoolId: '2',
-          schoolName: 'Bright Future School',
-          subject: 'Payment Problem',
-          description: 'Payment not processing',
-          status: 'in_progress',
-          priority: 'medium',
-          lastUpdated: '2024-07-30T09:00:00Z',
-          conversation: [
-            { id: '1', sender: 'School Admin', message: 'Payment gateway error', timestamp: '2024-07-30T09:00:00Z' },
-            { id: '2', sender: 'Support', message: 'Checking payment gateway status', timestamp: '2024-07-30T09:15:00Z' }
-          ]
-        }
-      ];
-      dispatch({ type: 'SET_SUPPORT_TICKETS', payload: mockTickets });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch support tickets' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -466,21 +390,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getSubscriptions();
       dispatch({ type: 'SET_INVOICES', payload: response.subscriptions || [] });
     } catch (error) {
-      console.warn('Using mock data due to API error:', error);
-      // Use mock data as fallback
-      const mockInvoices = [
-        {
-          id: '1',
-          schoolId: '1',
-          schoolName: 'St. Mary\'s Academy',
-          planName: 'Premium',
-          amount: 199,
-          dueDate: '2024-08-15',
-          issuedDate: '2024-07-15',
-          status: 'Due'
-        }
-      ];
-      dispatch({ type: 'SET_INVOICES', payload: mockInvoices });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch invoices' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -516,30 +426,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getSystemSettings();
       dispatch({ type: 'SET_SYSTEM_SETTINGS', payload: response.settings });
     } catch (error) {
-      console.warn('Using mock data due to API error:', error);
-      // Use mock data as fallback
-      const mockSettings = {
-        platformName: 'JafaSol',
-        adminEmail: 'admin@jafasol.com',
-        platformUrl: 'https://jafasol.com',
-        defaultCurrency: 'USD',
-        taxPercentage: 0,
-        paymentGateways: {
-          stripe: { apiKey: '', secretKey: '' },
-          paypal: { clientId: '', clientSecret: '' },
-          mpesa: { consumerKey: '', consumerSecret: '' },
-        },
-        emailConfig: {
-          smtpHost: '',
-          smtpPort: 587,
-          smtpUser: '',
-          smtpPass: '',
-        },
-        branding: {
-          logoUrl: '',
-        },
-      };
-      dispatch({ type: 'SET_SYSTEM_SETTINGS', payload: mockSettings });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch system settings' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -552,20 +439,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.createSchool(schoolData);
       
       const newSchool: School = {
-        id: response.school.id,
+        id: response.school._id || response.school.id,
         name: response.school.name,
-        email: response.school.contactEmail,
-        phone: response.school.contactPhone || '',
+        email: response.school.email,
+        phone: response.school.phone || '',
         logoUrl: `https://picsum.photos/seed/${Date.now()}/40/40`,
-        plan: response.school.subscriptionPlan,
+        plan: response.school.plan,
         status: response.school.status,
-        subdomain: response.school.domain,
-        storageUsage: 0,
-        createdAt: new Date().toISOString().split('T')[0],
-        modules: [],
+        subdomain: response.school.subdomain,
+        storageUsage: response.school.storageUsage || 0,
+        createdAt: response.school.createdAt ? new Date(response.school.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        modules: response.school.modules || [],
       };
 
       dispatch({ type: 'ADD_SCHOOL', payload: newSchool });
+      // Refresh the schools list to ensure consistency
+      await fetchSchools();
       return newSchool;
     } catch (error) {
       dispatch({ 
@@ -610,6 +499,31 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         type: 'SET_ERROR', 
         payload: error instanceof Error ? error.message : 'Failed to delete school' 
       });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Upload school logo
+  const uploadSchoolLogo = async (id: string, logoData: any) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const response = await apiService.uploadSchoolLogo(id, logoData);
+      
+      // Update the school with the new logo URL
+      const updatedSchool = state.schools.find(s => s.id === id);
+      if (updatedSchool) {
+        const newSchool = { ...updatedSchool, logoUrl: response.logo.logoUrl };
+        dispatch({ type: 'UPDATE_SCHOOL', payload: newSchool });
+      }
+      
+      return response.logo;
+    } catch (error) {
+      dispatch({ 
+        type: 'SET_ERROR', 
+        payload: error instanceof Error ? error.message : 'Failed to upload logo' 
+      });
+      throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -910,16 +824,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getSecuritySettings();
       dispatch({ type: 'SET_SECURITY_SETTINGS', payload: response.settings });
     } catch (error) {
-      console.warn('Using mock data due to API error:', error);
-      // Use mock data as fallback
-      const mockSettings = {
-        twoFactorEnabled: false,
-        lastPasswordChange: '2023-10-27',
-        lastLogin: '2023-10-27 10:00:00',
-        failedAttempts: 0,
-        lockoutTime: '30 minutes',
-      };
-      dispatch({ type: 'SET_SECURITY_SETTINGS', payload: mockSettings });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch security settings' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -974,31 +879,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getFeatureToggles();
       dispatch({ type: 'SET_FEATURE_TOGGLES', payload: response.toggles || [] });
     } catch (error) {
-      console.log('Using mock data due to API error:', error);
-      // Fallback to mock data if API fails
-      const mockFeatureToggles = [
-        {
-          id: '1',
-          name: 'Advanced Analytics',
-          description: 'Enable advanced analytics features',
-          status: 'enabled',
-          targetAudience: 'all',
-          rolloutPercentage: 100,
-          createdAt: '2024-07-01T00:00:00Z',
-          lastModified: '2024-07-15T00:00:00Z'
-        },
-        {
-          id: '2',
-          name: 'AI Chat Support',
-          description: 'Enable AI-powered chat support',
-          status: 'enabled',
-          targetAudience: 'premium',
-          rolloutPercentage: 50,
-          createdAt: '2024-07-10T00:00:00Z',
-          lastModified: '2024-07-20T00:00:00Z'
-        }
-      ];
-      dispatch({ type: 'SET_FEATURE_TOGGLES', payload: mockFeatureToggles });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch feature toggles' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -1076,27 +957,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const response = await apiService.getABTests();
       dispatch({ type: 'SET_AB_TESTS', payload: response.tests || [] });
     } catch (error) {
-      console.log('Using mock data due to API error:', error);
-      // Fallback to mock data if API fails
-      const mockABTests = [
-        {
-          id: '1',
-          name: 'New Dashboard Layout',
-          description: 'Testing new dashboard design',
-          status: 'active',
-          variantA: 'Current Layout',
-          variantB: 'New Layout',
-          trafficSplit: 50,
-          metrics: {
-            variantA: { impressions: 1000, conversions: 150, conversionRate: 15.0 },
-            variantB: { impressions: 1000, conversions: 180, conversionRate: 18.0 }
-          },
-          startDate: '2024-07-01T00:00:00Z',
-          endDate: '2024-07-31T00:00:00Z',
-          createdAt: '2024-07-01T00:00:00Z'
-        }
-      ];
-      dispatch({ type: 'SET_AB_TESTS', payload: mockABTests });
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch AB tests' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -1302,6 +1163,19 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Update system settings
+  const updateSystemSettings = async (settings: any) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      await apiService.updateSystemSettings(settings);
+      dispatch({ type: 'SET_SYSTEM_SETTINGS', payload: settings });
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to update system settings' });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
   const value = {
     state,
     login,
@@ -1359,6 +1233,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     bulkProvisionSubdomains,
     getSubdomainTemplates,
     applySubdomainTemplate,
+    updateSystemSettings,
+    uploadSchoolLogo,
   };
 
   return (
