@@ -105,6 +105,24 @@ const AppContent: React.FC = () => {
     console.log('Create backup for school:', schoolId);
   };
 
+  // Debug function to test API
+  const testAPI = async () => {
+    try {
+      console.log('Testing API endpoints...');
+      const schoolsResponse = await fetch('https://jafasol.com/api/admin/schools', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Schools API response status:', schoolsResponse.status);
+      const schoolsData = await schoolsResponse.json();
+      console.log('Schools API response data:', schoolsData);
+    } catch (error) {
+      console.error('API test failed:', error);
+    }
+  };
+
   const renderActiveView = (activeView: ActiveView) => {
     switch (activeView) {
       case 'dashboard':

@@ -45,6 +45,10 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
     const [isLoading, setIsLoading] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
 
+    // Debug logging
+    console.log('SchoolsList: Received schools:', schools);
+    console.log('SchoolsList: Schools count:', schools.length);
+
     const handleCreateSchool = async (newSchoolData: Omit<School, 'id' | 'createdAt' | 'storageUsage' | 'logoUrl'>) => {
         try {
             setIsLoading(true);
@@ -204,6 +208,15 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
                             {isLoading ? 'Refreshing...' : 'Refresh'}
                         </button>
                     )}
+                    <button 
+                        onClick={() => {
+                            console.log('Current schools in state:', schools);
+                            console.log('Schools length:', schools.length);
+                        }}
+                        className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                    >
+                        Debug
+                    </button>
                     <button onClick={() => setIsRegisterModalOpen(true)} className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
                         <PlusIcon className="-ml-1 mr-2 h-5 w-5" />
                         Register New School
