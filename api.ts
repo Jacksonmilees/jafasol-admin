@@ -151,7 +151,7 @@ class ApiService {
     const token = this.getToken();
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -248,8 +248,7 @@ class ApiService {
   async getSchools(): Promise<any> {
     return this.deduplicatedRequest('schools', () =>
       this.request('/api/admin/schools', {}, {
-        ttl: 5 * 60 * 1000, // 5 minutes
-        staleTime: 30 * 1000, // 30 seconds
+        useCache: false, // Disable caching temporarily to debug timeout
         cacheKey: 'schools'
       })
     );
