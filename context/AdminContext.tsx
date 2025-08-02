@@ -119,8 +119,6 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
     case 'SET_DASHBOARD_STATS':
       return { ...state, dashboardStats: action.payload };
     case 'SET_SCHOOLS':
-      console.log('Reducer: Setting schools:', action.payload);
-      console.log('Reducer: Schools count:', action.payload.length);
       return { ...state, schools: action.payload };
     case 'SET_SUPPORT_TICKETS':
       return { ...state, supportTickets: action.payload };
@@ -131,11 +129,7 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
     case 'SET_SYSTEM_SETTINGS':
       return { ...state, systemSettings: action.payload };
     case 'ADD_SCHOOL':
-      console.log('Reducer: Adding school to state:', action.payload);
-      console.log('Reducer: Previous schools count:', state.schools.length);
-      const newState = { ...state, schools: [action.payload, ...state.schools] };
-      console.log('Reducer: New schools count:', newState.schools.length);
-      return newState;
+      return { ...state, schools: [action.payload, ...state.schools] };
     case 'UPDATE_SCHOOL':
       return {
         ...state,
@@ -376,14 +370,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Fetch schools
   const fetchSchools = useCallback(async () => {
     try {
-      console.log('Fetching schools...');
       dispatch({ type: 'SET_LOADING', payload: true });
       const response = await apiService.getSchools();
-      console.log('Schools API response:', response);
       
       // Ensure we have a valid response with schools array
       const schools = response?.schools || response?.data?.schools || response || [];
-      console.log('Extracted schools array:', schools);
       
       // Sort schools by creation date (newest first)
       const sortedSchools = Array.isArray(schools) ? schools.sort((a: School, b: School) => {
@@ -392,9 +383,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return dateB - dateA;
       }) : [];
       
-      console.log('Sorted schools:', sortedSchools);
       dispatch({ type: 'SET_SCHOOLS', payload: sortedSchools });
-      console.log('Updated schools state with', sortedSchools.length, 'schools');
     } catch (error) {
       console.error('Failed to fetch schools:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch schools' });
@@ -468,14 +457,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Create school
   const createSchool = async (schoolData: any): Promise<School> => {
     try {
-      console.log('Creating school with data:', schoolData);
       dispatch({ type: 'SET_LOADING', payload: true });
       const response = await apiService.createSchool(schoolData);
-      console.log('School creation response:', response);
       
       // Handle different response formats
       const extractedSchoolData = response.school || response.data || response;
-      console.log('Extracted school data:', extractedSchoolData);
       
       const newSchool: School = {
         id: extractedSchoolData._id || extractedSchoolData.id || `temp_${Date.now()}`,
@@ -491,8 +477,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         modules: extractedSchoolData.modules || [],
       };
 
-      console.log('Created school object:', newSchool);
-
       // Include admin credentials in the response for the onboarding modal
       const schoolWithCredentials = {
         ...newSchool,
@@ -500,15 +484,12 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
 
       dispatch({ type: 'ADD_SCHOOL', payload: newSchool });
-      console.log('Added school to state, current schools count:', state.schools.length + 1);
       
       // Clear the schools cache to ensure fresh data
       apiService.clearCache('schools');
-      console.log('Cleared schools cache');
       
       // Refresh the schools list to ensure consistency
       await fetchSchools();
-      console.log('Refreshed schools list');
       
       return schoolWithCredentials as any;
     } catch (error) {

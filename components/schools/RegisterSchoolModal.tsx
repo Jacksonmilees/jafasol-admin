@@ -50,12 +50,12 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
 
     setSubdomainStatus('checking');
     try {
-      // This would call the API to check subdomain availability
-      // For now, we'll simulate the check
-      const response = await fetch('/api/admin/subdomains/check', {
+      // Call the API to check subdomain availability
+      const response = await fetch('https://jafasol.com/api/admin/subdomains/check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
         },
         body: JSON.stringify({ subdomain: subdomainValue }),
       });

@@ -45,9 +45,7 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
     const [isLoading, setIsLoading] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
 
-    // Debug logging
-    console.log('SchoolsList: Received schools:', schools);
-    console.log('SchoolsList: Schools count:', schools.length);
+
 
     const handleCreateSchool = async (newSchoolData: Omit<School, 'id' | 'createdAt' | 'storageUsage' | 'logoUrl'>) => {
         try {
@@ -78,11 +76,24 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
         } catch (error) {
             console.error('Failed to create school:', error);
             
+            // Create user-friendly error message
+            let errorMessage = 'Failed to create school. Please try again.';
+            
+            if (error instanceof Error) {
+                if (error.message.includes('duplicate key error') && error.message.includes('email')) {
+                    errorMessage = 'A school with this subdomain already exists. Please choose a different subdomain.';
+                } else if (error.message.includes('subdomain')) {
+                    errorMessage = 'This subdomain is already taken. Please choose a different one.';
+                } else if (error.message.includes('validation')) {
+                    errorMessage = 'Please check your input and try again.';
+                }
+            }
+            
             // Add error toast
             const errorToast: Toast = {
                 id: Date.now().toString(),
                 type: 'error',
-                message: 'Failed to create school. Please try again.',
+                message: errorMessage,
                 duration: 5000
             };
             setToasts(prev => [...prev, errorToast]);
