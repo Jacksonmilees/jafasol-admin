@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { useAdmin } from '../../context/AdminContext';
 import { BellIcon } from '../icons/Icons';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onMenuClick?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { state, logout } = useAdmin();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -23,7 +27,17 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <h1 className="text-xl font-semibold text-gray-900">JafaSol Admin</h1>
+            {/* Mobile menu button */}
+            <button
+              onClick={onMenuClick}
+              className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
+            <h1 className="text-xl font-semibold text-gray-900 ml-2 lg:ml-0">JafaSol Admin</h1>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -66,7 +80,7 @@ const Header: React.FC = () => {
                 <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium text-gray-600">A</span>
                 </div>
-                <span className="text-sm font-medium">{state.user?.name || 'Admin'}</span>
+                <span className="hidden sm:block text-sm font-medium">{state.user?.name || 'Admin'}</span>
               </button>
 
               {showUserMenu && (

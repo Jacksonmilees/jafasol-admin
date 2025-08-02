@@ -392,7 +392,10 @@ class ApiService {
   }
 
   async getSubdomainTemplates(): Promise<any> {
-    return this.request('/admin/subdomains/templates');
+    return this.request('/admin/subdomains/templates', {}, {
+      ttl: 10 * 60 * 1000, // 10 minutes cache
+      cacheKey: 'subdomain-templates'
+    });
   }
 
   async applySubdomainTemplate(id: string, templateId: string): Promise<any> {
