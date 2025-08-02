@@ -15,6 +15,7 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
   const [phone, setPhone] = useState('');
   const [plan, setPlan] = useState<PlanName>(PlanName.Basic);
   const [subdomain, setSubdomain] = useState('');
+  const [subdomainStatus, setSubdomainStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle');
   const [assignedModules, setAssignedModules] = useState<Set<ModuleKey>>(new Set());
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
@@ -40,6 +41,35 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
       return newSet;
     });
   };
+
+  const checkSubdomainAvailability = async (subdomainValue: string) => {
+    if (!subdomainValue || subdomainValue.length < 3) {
+      setSubdomainStatus('idle');
+      return;
+    }
+
+    setSubdomainStatus('checking');
+    try {
+      // This would call the API to check subdomain availability
+      // For now, we'll simulate the check
+      const response = await fetch('/api/admin/subdomains/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ subdomain: subdomainValue }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setSubdomainStatus(data.available ? 'available' : 'unavailable');
+      } else {
+        setSubdomainStatus('unavailable');
+      }
+    } catch (error) {
+      setSubdomainStatus('unavailable');
+    }
+  };
   
   const resetForm = () => {
     setName('');
@@ -47,6 +77,7 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
     setPhone('');
     setPlan(PlanName.Basic);
     setSubdomain('');
+    setSubdomainStatus('idle');
     setAssignedModules(new Set());
     setUploadedFiles([]);
   };
@@ -56,6 +87,12 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
       alert("School Name, Email, and Subdomain are required.");
       return;
     }
+
+    if (subdomainStatus !== 'available') {
+      alert("Please choose an available subdomain.");
+      return;
+    }
+
     // Note: uploadedFiles state is managed but not passed in onCreate,
     // as file handling logic would be backend-dependent.
     onCreate({
@@ -119,9 +156,37 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
             <div>
                  <label htmlFor="subdomain" className="block text-sm font-medium text-gray-700">Subdomain</label>
                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <input type="text" id="subdomain" value={subdomain} onChange={e => setSubdomain(e.target.value)} className="focus:ring-primary focus:border-primary flex-1 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300" placeholder="schoolname" />
+                    <input 
+                      type="text" 
+                      id="subdomain" 
+                      value={subdomain} 
+                      onChange={e => {
+                        const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                        setSubdomain(value);
+                        if (value.length >= 3) {
+                          checkSubdomainAvailability(value);
+                        } else {
+                          setSubdomainStatus('idle');
+                        }
+                      }} 
+                      className={`focus:ring-primary focus:border-primary flex-1 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300 ${
+                        subdomainStatus === 'available' ? 'border-green-300' : 
+                        subdomainStatus === 'unavailable' ? 'border-red-300' : 
+                        subdomainStatus === 'checking' ? 'border-yellow-300' : ''
+                      }`} 
+                      placeholder="schoolname" 
+                    />
                     <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">.jafasol.com</span>
                  </div>
+                 {subdomainStatus === 'checking' && (
+                   <p className="mt-1 text-sm text-yellow-600">Checking availability...</p>
+                 )}
+                 {subdomainStatus === 'available' && (
+                   <p className="mt-1 text-sm text-green-600">✓ Subdomain is available</p>
+                 )}
+                 {subdomainStatus === 'unavailable' && (
+                   <p className="mt-1 text-sm text-red-600">✗ Subdomain is not available</p>
+                 )}
             </div>
         </div>
 

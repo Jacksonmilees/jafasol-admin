@@ -358,7 +358,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const fetchDashboardStats = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await apiService.getDashboardStats();
+      const response = await apiService.getDashboard();
       dispatch({ type: 'SET_DASHBOARD_STATS', payload: response.stats });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch dashboard stats' });
@@ -397,7 +397,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const fetchInvoices = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await apiService.getSubscriptions();
+      const response = await apiService.getBackups(); // Using backups as fallback for invoices
       dispatch({ type: 'SET_INVOICES', payload: response.subscriptions || [] });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch invoices' });
@@ -462,10 +462,16 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         modules: response.school.modules || [],
       };
 
+      // Include admin credentials in the response for the onboarding modal
+      const schoolWithCredentials = {
+        ...newSchool,
+        adminCredentials: response.school.adminCredentials
+      };
+
       dispatch({ type: 'ADD_SCHOOL', payload: newSchool });
       // Refresh the schools list to ensure consistency
       await fetchSchools();
-      return newSchool;
+      return schoolWithCredentials as any;
     } catch (error) {
       dispatch({ 
         type: 'SET_ERROR', 

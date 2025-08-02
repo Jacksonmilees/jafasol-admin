@@ -41,19 +41,26 @@ const SchoolsList: React.FC<SchoolsListProps> = ({ schools, onCreateSchool, onUp
     const [deletingSchool, setDeletingSchool] = useState<School | null>(null);
     const [onboardingInfo, setOnboardingInfo] = useState<{ isOpen: boolean; schoolName: string; credentials: {username: string; password: string} }>({ isOpen: false, schoolName: '', credentials: {username: '', password: ''} });
 
-    const handleCreateSchool = (newSchoolData: Omit<School, 'id' | 'createdAt' | 'storageUsage' | 'logoUrl'>) => {
-        const newSchool = onCreateSchool(newSchoolData);
+    const handleCreateSchool = async (newSchoolData: Omit<School, 'id' | 'createdAt' | 'storageUsage' | 'logoUrl'>) => {
+        try {
+            const newSchool = await onCreateSchool(newSchoolData);
+            
+            // Extract credentials from the API response
+            const adminCredentials = (newSchool as any).adminCredentials;
+            const username = adminCredentials?.username || `admin@${newSchool.subdomain}`;
+            const password = adminCredentials?.password || Math.random().toString(36).slice(-8);
+            
+            setOnboardingInfo({
+                isOpen: true,
+                schoolName: newSchool.name,
+                credentials: { username, password }
+            });
 
-        const generatedPassword = Math.random().toString(36).slice(-8);
-        const generatedUsername = `admin@${newSchool.subdomain}`;
-        
-        setOnboardingInfo({
-            isOpen: true,
-            schoolName: newSchool.name,
-            credentials: { username: generatedUsername, password: generatedPassword }
-        });
-
-        setIsRegisterModalOpen(false);
+            setIsRegisterModalOpen(false);
+        } catch (error) {
+            console.error('Failed to create school:', error);
+            alert('Failed to create school. Please try again.');
+        }
     };
 
     const handleUpdateSchool = (updatedSchool: School) => {

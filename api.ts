@@ -1,5 +1,5 @@
 // API Service for Main JafaSol Admin Dashboard
-const API_BASE = 'https://jafasol.com/api';
+const API_BASE = 'https://jafasol.com';
 
 interface ApiResponse<T> {
   message: string;
@@ -205,7 +205,7 @@ class ApiService {
   // Authentication
   async login(email: string, password: string): Promise<AuthResponse> {
     try {
-      const response = await this.request<AuthResponse>('/auth/login', {
+      const response = await this.request<AuthResponse>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }, { useCache: false }); // Don't cache login responses
@@ -220,7 +220,7 @@ class ApiService {
 
   async logout(): Promise<void> {
     try {
-      await this.request('/auth/logout', {
+      await this.request('/api/auth/logout', {
         method: 'POST',
       }, { useCache: false });
     } finally {
@@ -236,7 +236,7 @@ class ApiService {
   // Dashboard with aggressive caching
   async getDashboard(): Promise<any> {
     return this.deduplicatedRequest('dashboard', () => 
-      this.request('/dashboard', {}, {
+      this.request('/api/dashboard', {}, {
         ttl: 2 * 60 * 1000, // 2 minutes
         staleTime: 10 * 1000, // 10 seconds
         cacheKey: 'dashboard'
@@ -247,7 +247,7 @@ class ApiService {
   // Schools with longer cache
   async getSchools(): Promise<any> {
     return this.deduplicatedRequest('schools', () =>
-      this.request('/admin/schools', {}, {
+      this.request('/api/admin/schools', {}, {
         ttl: 5 * 60 * 1000, // 5 minutes
         staleTime: 30 * 1000, // 30 seconds
         cacheKey: 'schools'
@@ -258,7 +258,7 @@ class ApiService {
   // Analytics with medium cache
   async getAnalytics(): Promise<any> {
     return this.deduplicatedRequest('analytics', () =>
-      this.request('/admin/analytics', {}, {
+      this.request('/api/admin/analytics', {}, {
         ttl: 3 * 60 * 1000, // 3 minutes
         staleTime: 15 * 1000, // 15 seconds
         cacheKey: 'analytics'
@@ -300,16 +300,16 @@ class ApiService {
 
   // Support Tickets
   async getSupportTickets(): Promise<any> {
-    return this.request('/admin/support/tickets');
+    return this.request('/api/admin/support/tickets');
   }
 
   // System Settings
   async getSystemSettings(): Promise<any> {
-    return this.request('/admin/settings');
+    return this.request('/api/admin/settings');
   }
 
   async updateSystemSettings(settings: any): Promise<any> {
-    return this.request('/admin/settings', {
+    return this.request('/api/admin/settings', {
       method: 'PUT',
       body: JSON.stringify(settings),
     });
@@ -317,22 +317,57 @@ class ApiService {
 
   // Health Check
   async healthCheck(): Promise<any> {
-    return this.request('/health');
+    return this.request('/api/health');
   }
 
   // Backups
   async getBackups(): Promise<any> {
-    return this.request('/admin/backups');
+    return this.request('/api/admin/backups');
   }
 
   // Data Export
   async exportData(type: string): Promise<any> {
-    return this.request(`/admin/export/${type}`);
+    return this.request(`/api/admin/export/${type}`);
   }
 
   // Subdomains
   async getSubdomains(): Promise<any> {
-    return this.request('/admin/subdomains');
+    return this.request('/api/admin/subdomains');
+  }
+
+  // School management
+  async createSchool(schoolData: any): Promise<any> {
+    return this.request('/api/admin/schools', {
+      method: 'POST',
+      body: JSON.stringify(schoolData),
+    });
+  }
+
+  async checkSubdomainAvailability(subdomain: string): Promise<any> {
+    return this.request('/api/admin/subdomains/check', {
+      method: 'POST',
+      body: JSON.stringify({ subdomain }),
+    });
+  }
+
+  async updateSchool(id: string, updates: any): Promise<any> {
+    return this.request(`/api/admin/schools/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  }
+
+  async deleteSchool(id: string): Promise<any> {
+    return this.request(`/api/admin/schools/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async uploadSchoolLogo(id: string, logoData: any): Promise<any> {
+    return this.request(`/api/admin/schools/${id}/logo`, {
+      method: 'POST',
+      body: JSON.stringify(logoData),
+    });
   }
 
   async getSubdomain(id: string): Promise<any> {
