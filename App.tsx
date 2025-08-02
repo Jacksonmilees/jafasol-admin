@@ -49,7 +49,11 @@ const AppContent: React.FC = () => {
   }, [isAuthenticated, fetchDashboardStats, fetchSchools, fetchSupportTickets, fetchInvoices, fetchBackups, fetchSystemSettings, fetchSubdomains, fetchUsers, fetchNotifications, fetchAnnouncements, fetchLoginLogs, fetchSecurityAudit, fetchSecuritySettings, fetchFeatureToggles, fetchABTests, fetchAIChatHistory, fetchAIInsights, fetchAIRecommendations]);
 
   const handleLogin = async (email: string, password: string) => {
-    await login(email, password);
+    try {
+      await login(email, password);
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   const handleLogout = () => {
@@ -159,7 +163,7 @@ const AppContent: React.FC = () => {
   };
 
   if (!isAuthenticated) {
-    return <LoginPage onLogin={handleLogin} />;
+    return <LoginPage onLogin={handleLogin} isLoading={isLoading} />;
   }
 
   return (

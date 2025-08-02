@@ -319,20 +319,30 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       const response = await apiService.login(email, password);
       
-      // For admin dashboard, we'll use a mock admin user
+      // Use the real user data from the backend
       const adminUser = {
-        id: 'admin-1',
-        name: 'JafaSol Super Admin',
-        email: email,
-        role: 'super_admin',
+        id: response.user.id,
+        name: response.user.name,
+        email: response.user.email,
+        role: response.user.role,
       };
 
       dispatch({ type: 'SET_USER', payload: adminUser });
+      
+      // Start background data fetching without blocking login
+      setTimeout(() => {
+        apiService.prefetchCriticalData().catch(error => {
+          console.warn('Background data prefetch failed:', error);
+        });
+      }, 100);
+      
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please check your credentials.';
       dispatch({ 
         type: 'SET_ERROR', 
-        payload: error instanceof Error ? error.message : 'Login failed' 
+        payload: errorMessage 
       });
+      throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }

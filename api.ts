@@ -204,13 +204,18 @@ class ApiService {
 
   // Authentication
   async login(email: string, password: string): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    }, { useCache: false }); // Don't cache login responses
-    
-    this.setToken(response.token, response.expiresIn);
-    return response;
+    try {
+      const response = await this.request<AuthResponse>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      }, { useCache: false }); // Don't cache login responses
+      
+      this.setToken(response.token, response.expiresIn);
+      return response;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   }
 
   async logout(): Promise<void> {
