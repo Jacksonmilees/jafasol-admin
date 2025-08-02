@@ -1,5 +1,5 @@
 // API Service for Main JafaSol Admin Dashboard
-const API_BASE = 'https://jafasol-backend-c364453817af.herokuapp.com/api';
+const API_BASE = 'https://jafasol.com/api';
 
 interface ApiResponse<T> {
   message: string;
