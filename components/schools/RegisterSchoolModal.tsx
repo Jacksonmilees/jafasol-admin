@@ -93,6 +93,18 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
       return;
     }
 
+    // Validate subdomain format
+    const subdomainRegex = /^[a-z0-9-]+$/;
+    if (!subdomainRegex.test(subdomain)) {
+      alert("Subdomain can only contain lowercase letters, numbers, and hyphens.");
+      return;
+    }
+
+    if (subdomain.length < 3) {
+      alert("Subdomain must be at least 3 characters long.");
+      return;
+    }
+
     // Note: uploadedFiles state is managed but not passed in onCreate,
     // as file handling logic would be backend-dependent.
     onCreate({
@@ -101,7 +113,7 @@ const RegisterSchoolModal: React.FC<RegisterSchoolModalProps> = ({ isOpen, onClo
       phone,
       plan,
       status: SchoolStatus.Active,
-      subdomain: `${subdomain}.jafasol.com`,
+      subdomain: subdomain, // Send just the subdomain part, not the full domain
       modules: Array.from(assignedModules),
     });
     resetForm();
