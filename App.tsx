@@ -61,7 +61,7 @@ const AppContent: React.FC = () => {
   };
 
   // Wrapper functions to match expected signatures
-  const handleCreateSchool = (newSchoolData: Omit<School, 'id' | 'createdAt' | 'storageUsage' | 'logoUrl'>): School => {
+  const handleCreateSchool = async (newSchoolData: Omit<School, 'id' | 'createdAt' | 'storageUsage' | 'logoUrl'>): Promise<School> => {
     const schoolData = {
       name: newSchoolData.name,
       email: newSchoolData.email,
@@ -72,27 +72,14 @@ const AppContent: React.FC = () => {
       modules: newSchoolData.modules,
     };
     
-    // Create a temporary school object for immediate UI update
-    const tempSchool: School = {
-      id: `temp_${Date.now()}`,
-      name: schoolData.name,
-      email: schoolData.email,
-      phone: schoolData.phone,
-      logoUrl: `https://picsum.photos/seed/${Date.now()}/40/40`,
-      plan: schoolData.plan,
-      status: schoolData.status,
-      subdomain: schoolData.subdomain,
-      storageUsage: 0,
-      createdAt: new Date().toISOString().split('T')[0],
-      modules: schoolData.modules,
-    };
-    
-    // Call the API in the background
-    createSchool(schoolData).catch(error => {
+    try {
+      // Call the API to create the school
+      const createdSchool = await createSchool(schoolData);
+      return createdSchool;
+    } catch (error) {
       console.error('Failed to create school:', error);
-    });
-    
-    return tempSchool;
+      throw error;
+    }
   };
 
   const handleUpdateSchool = (updatedSchool: School) => {
@@ -129,6 +116,7 @@ const AppContent: React.FC = () => {
             onCreateSchool={handleCreateSchool} 
             onUpdateSchool={handleUpdateSchool} 
             onDeleteSchool={deleteSchool} 
+            onRefreshSchools={fetchSchools}
           />
         );
       case 'users':

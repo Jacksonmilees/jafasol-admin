@@ -372,8 +372,20 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       const response = await apiService.getSchools();
-      dispatch({ type: 'SET_SCHOOLS', payload: response.schools || [] });
+      
+      // Ensure we have a valid response with schools array
+      const schools = response?.schools || response?.data?.schools || response || [];
+      
+      // Sort schools by creation date (newest first)
+      const sortedSchools = Array.isArray(schools) ? schools.sort((a: School, b: School) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      }) : [];
+      
+      dispatch({ type: 'SET_SCHOOLS', payload: sortedSchools });
     } catch (error) {
+      console.error('Failed to fetch schools:', error);
       dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to fetch schools' });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
@@ -469,6 +481,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
 
       dispatch({ type: 'ADD_SCHOOL', payload: newSchool });
+      // Clear the schools cache to ensure fresh data
+      apiService.clearCache('schools');
       // Refresh the schools list to ensure consistency
       await fetchSchools();
       return schoolWithCredentials as any;
