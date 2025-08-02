@@ -22,12 +22,21 @@ export default defineConfig(({ mode }) => {
       build: {
         outDir: 'dist',
         sourcemap: false,
+        chunkSizeWarningLimit: 1000,
         rollupOptions: {
           output: {
             manualChunks: {
-              vendor: ['react', 'react-dom'],
-              charts: ['recharts']
+              'react-vendor': ['react', 'react-dom'],
+              'ui-vendor': ['recharts'],
+              'utils': ['@google/genai']
             }
+          }
+        },
+        minify: 'terser',
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true
           }
         }
       }
