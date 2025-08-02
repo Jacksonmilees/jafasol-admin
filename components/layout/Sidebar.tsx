@@ -50,22 +50,29 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, onLogout }
   ];
 
   return (
-    <div className="w-full lg:w-64 bg-brand-dark text-white flex flex-col h-screen lg:fixed">
-      <div className="flex items-center justify-center h-20 border-b border-gray-700">
-        <h1 className="text-2xl font-bold">Jafasol</h1>
+    <div className="w-full lg:w-64 bg-brand-dark text-white flex flex-col sidebar-full-height">
+      {/* Logo/Brand - Now at the very top */}
+      <div className="flex items-center justify-center h-16 border-b border-gray-700 bg-brand-darker flex-shrink-0">
+        <h1 className="text-xl font-bold text-white">Jafasol Admin</h1>
       </div>
-      <nav className="flex-grow p-4 space-y-2">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.id}
-            icon={item.icon}
-            label={item.label}
-            isActive={activeView === item.id}
-            onClick={() => setActiveView(item.id as ActiveView)}
-          />
-        ))}
-      </nav>
-      <div className="p-4 border-t border-gray-700 space-y-2">
+      
+      {/* Scrollable navigation */}
+      <div className="flex-1 overflow-y-auto sidebar-scroll">
+        <nav className="p-4 space-y-2">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.id}
+              icon={item.icon}
+              label={item.label}
+              isActive={activeView === item.id}
+              onClick={() => setActiveView(item.id as ActiveView)}
+            />
+          ))}
+        </nav>
+      </div>
+      
+      {/* Settings and Logout - Fixed at bottom */}
+      <div className="p-4 border-t border-gray-700 space-y-2 bg-brand-darker flex-shrink-0">
          {settingsNavItems.map((item) => (
             <NavLink
                 key={item.id}
