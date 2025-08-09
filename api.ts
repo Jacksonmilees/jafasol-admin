@@ -442,41 +442,41 @@ class ApiService {
   // Users
   async getUsers(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/users?${queryString}`);
+    return this.request(`/api/admin/users?${queryString}`);
   }
 
   async getUser(id: string): Promise<any> {
-    return this.request(`/admin/users/${id}`);
+    return this.request(`/api/admin/users/${id}`);
   }
 
   async createUser(userData: any): Promise<any> {
-    return this.request('/admin/users', {
+    return this.request('/api/admin/users', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   }
 
   async updateUser(id: string, updates: any): Promise<any> {
-    return this.request(`/admin/users/${id}`, {
+    return this.request(`/api/admin/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteUser(id: string): Promise<any> {
-    return this.request(`/admin/users/${id}`, {
+    return this.request(`/api/admin/users/${id}`, {
       method: 'DELETE',
     });
   }
 
   async resetUserPassword(id: string): Promise<any> {
-    return this.request(`/admin/users/${id}/reset-password`, {
+    return this.request(`/api/admin/users/${id}/reset-password`, {
       method: 'POST',
     });
   }
 
   async toggleUserStatus(id: string): Promise<any> {
-    return this.request(`/admin/users/${id}/toggle-status`, {
+    return this.request(`/api/admin/users/${id}/toggle-status`, {
       method: 'POST',
     });
   }
@@ -484,46 +484,46 @@ class ApiService {
   // Notifications
   async getNotifications(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/notifications?${queryString}`);
+    return this.request(`/api/admin/notifications?${queryString}`);
   }
 
   async getNotification(id: string): Promise<any> {
-    return this.request(`/admin/notifications/${id}`);
+    return this.request(`/api/admin/notifications/${id}`);
   }
 
   async createNotification(notificationData: any): Promise<any> {
-    return this.request('/admin/notifications', {
+    return this.request('/api/admin/notifications', {
       method: 'POST',
       body: JSON.stringify(notificationData),
     });
   }
 
   async updateNotification(id: string, updates: any): Promise<any> {
-    return this.request(`/admin/notifications/${id}`, {
+    return this.request(`/api/admin/notifications/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteNotification(id: string): Promise<any> {
-    return this.request(`/admin/notifications/${id}`, {
+    return this.request(`/api/admin/notifications/${id}`, {
       method: 'DELETE',
     });
   }
 
   async markNotificationAsRead(id: string, userId: string): Promise<any> {
-    return this.request(`/admin/notifications/${id}/read`, {
+    return this.request(`/api/admin/notifications/${id}/read`, {
       method: 'POST',
       body: JSON.stringify({ userId }),
     });
   }
 
   async getAnnouncements(): Promise<any> {
-    return this.request('/admin/announcements');
+    return this.request('/api/admin/announcements');
   }
 
   async createAnnouncement(announcementData: any): Promise<any> {
-    return this.request('/admin/announcements', {
+    return this.request('/api/admin/announcements', {
       method: 'POST',
       body: JSON.stringify(announcementData),
     });
@@ -532,68 +532,68 @@ class ApiService {
   // Security
   async getLoginLogs(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/security/login-logs?${queryString}`);
+    return this.request(`/api/admin/security/login-logs?${queryString}`);
   }
 
   async getSecurityAudit(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/security/audit?${queryString}`);
+    return this.request(`/api/admin/security/audit?${queryString}`);
   }
 
   async getSecuritySettings(): Promise<any> {
-    return this.request('/admin/security/settings');
+    return this.request('/api/admin/security/settings');
   }
 
   async updateSecuritySettings(settings: any): Promise<any> {
-    return this.request('/admin/security/settings', {
+    return this.request('/api/admin/security/settings', {
       method: 'PUT',
       body: JSON.stringify(settings),
     });
   }
 
   async toggle2FA(userId: string, enabled: boolean): Promise<any> {
-    return this.request(`/admin/security/2fa/${userId}`, {
+    return this.request(`/api/admin/security/2fa/${userId}`, {
       method: 'POST',
       body: JSON.stringify({ enabled }),
     });
   }
 
   async get2FAStatus(userId: string): Promise<any> {
-    return this.request(`/admin/security/2fa/${userId}/status`);
+    return this.request(`/api/admin/security/2fa/${userId}/status`);
   }
 
   // Feature Toggles
   async getFeatureToggles(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/features?${queryString}`);
+    return this.request(`/api/admin/features?${queryString}`);
   }
 
   async getFeatureToggle(id: string): Promise<any> {
-    return this.request(`/admin/features/${id}`);
+    return this.request(`/api/admin/features/${id}`);
   }
 
   async createFeatureToggle(featureData: any): Promise<any> {
-    return this.request('/admin/features', {
+    return this.request('/api/admin/features', {
       method: 'POST',
       body: JSON.stringify(featureData),
     });
   }
 
   async updateFeatureToggle(id: string, updates: any): Promise<any> {
-    return this.request(`/admin/features/${id}`, {
+    return this.request(`/api/admin/features/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   }
 
   async deleteFeatureToggle(id: string): Promise<any> {
-    return this.request(`/admin/features/${id}`, {
+    return this.request(`/api/admin/features/${id}`, {
       method: 'DELETE',
     });
   }
 
   async toggleFeature(id: string): Promise<any> {
-    return this.request(`/admin/features/${id}/toggle`, {
+    return this.request(`/api/admin/features/${id}/toggle`, {
       method: 'POST',
     });
   }
@@ -601,18 +601,18 @@ class ApiService {
   // A/B Testing
   async getABTests(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/ab-tests?${queryString}`);
+    return this.request(`/api/admin/ab-tests?${queryString}`);
   }
 
   async createABTest(testData: any): Promise<any> {
-    return this.request('/admin/ab-tests', {
+    return this.request('/api/admin/ab-tests', {
       method: 'POST',
       body: JSON.stringify(testData),
     });
   }
 
   async updateABTestMetrics(id: string, metrics: any): Promise<any> {
-    return this.request(`/admin/ab-tests/${id}/metrics`, {
+    return this.request(`/api/admin/ab-tests/${id}/metrics`, {
       method: 'PUT',
       body: JSON.stringify(metrics),
     });
@@ -620,7 +620,7 @@ class ApiService {
 
   // AI Features
   async sendAIMessage(message: string, userId: string, userName: string): Promise<any> {
-    return this.request('/admin/ai/chat', {
+    return this.request('/api/admin/ai/chat', {
       method: 'POST',
       body: JSON.stringify({ message, userId, userName }),
     });
@@ -628,27 +628,27 @@ class ApiService {
 
   async getAIChatHistory(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/ai/chat?${queryString}`);
+    return this.request(`/api/admin/ai/chat?${queryString}`);
   }
 
   async getAIInsights(params?: any): Promise<any> {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/admin/ai/insights?${queryString}`);
+    return this.request(`/api/admin/ai/insights?${queryString}`);
   }
 
   async generateAIInsight(type: string, data: any): Promise<any> {
-    return this.request('/admin/ai/insights/generate', {
+    return this.request('/api/admin/ai/insights/generate', {
       method: 'POST',
       body: JSON.stringify({ type, data }),
     });
   }
 
   async getAIRecommendations(): Promise<any> {
-    return this.request('/admin/ai/recommendations');
+    return this.request('/api/admin/ai/recommendations');
   }
 
   async generateAutoResponse(query: string, context?: any): Promise<any> {
-    return this.request('/admin/ai/auto-response', {
+    return this.request('/api/admin/ai/auto-response', {
       method: 'POST',
       body: JSON.stringify({ query, context }),
     });
