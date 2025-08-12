@@ -45,7 +45,12 @@ ssh root@jafasol.com -p 5050 "chown -R www-data:www-data /var/www/jafasol/fronte
 ssh root@jafasol.com -p 5050 "chown -R www-data:www-data /var/www/jafasol/admin/dist"
 ssh root@jafasol.com -p 5050 "systemctl reload nginx"
 
+
 scp -P 5050 -r dist/* root@jafasol.com:/var/www/jafasol/frontend/dist/
+
+scp -P 5050 -r dist/* root@jafasol.com:/var/www/jafasol/frontend/dist/
+ssh root@jafasol.com -p 5050 "systemctl reload nginx"
+
 
 scp -P 5050 -r frontend/dist/* root@jafasol.com:/var/www/jafasol/frontend/dist/
 scp -P 5050 -r "main jafasol admin/dist/*" root@jafasol.com:/var/www/jafasol/admin/dist/
@@ -54,3 +59,19 @@ ssh root@jafasol.com -p 5050 "chown -R www-data:www-data /var/www/jafasol/fronte
 
 bash deploy.sh
 scp -P 5050 -r dist/* root@jafasol.com:/var/www/jafasol/admin/dist/
+
+scp -P 5050 backend/server.js root@jafasol.com:/var/www/jafasol/backend/server-clean.js
+
+
+scp -P 5050 backend/models/Route.js root@jafasol.com:/var/www/jafasol/backend/models/
+
+
+
+restart backend # Start backend permanently
+pm2 start server-clean.js --name jafasol-backend
+
+# Check status
+pm2 status
+
+# Test API endpoint
+curl http://localhost:5000/api/auth/login
